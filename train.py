@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pickle
 import yaml
 
+import process_data as pro
 import batch
 import cnn
 
@@ -15,21 +16,22 @@ import cnn
 f = open("settings.yml", encoding='UTF-8')
 settings = yaml.load(f)
 
-with open('data/image', 'rb') as f:
-    image = pickle.load(f)
+image, ratio = pro.load_data_cnn(0)
 
-with open('data/ncratio10', 'rb') as f:
-    ratio = pickle.load(f)
-
-image, ratio = batch.shuffle_image(image, ratio)
+print (image.shape, ratio.shape)
 
 print(len(image))
-num_data = settings["num_data"] ##訓練用データ数
+num_train = settings["num_train"] ##訓練用データ数
+num_validate = settings["num_validate"]
 num_test = settings["num_test"]
-train_x = image[:num_data]
-test_x = image[num_data:num_data + num_test]
-train_t = ratio[:num_data]
-test_t = ratio[num_data:num_data + num_test]
+train_x = image[:num_train]
+val_x = image[num_train:num_train + num_validate]
+test_x = image[num_train + num_validate:num_train + num_validate + num_test]
+train_t = ratio[:num_train]
+val_t = ratio[num_train:num_train + num_validate]
+test_t = ratio[num_train + num_validate:num_train + num_validate + num_test]
+
+print (train_x.shape, val_x.shape, test_x.shape)
 
 cnn = cnn.CNN(settings["input_sizex"], settings["input_sizey"], settings["num_class"])
 
@@ -44,12 +46,28 @@ for _ in range(settings["learning_times"]):
     batch_t = Batch_t.next_batch(Batch_num)
     cnn.sess.run(cnn.train_step,
              feed_dict={cnn.x:batch_x, cnn.t:batch_t, cnn.keep_prob:settings["keep_prob"]})
-    if i % 10 == 0:
-        summary, loss_val, acc_val = cnn.sess.run([cnn.summary, cnn.loss, cnn.accuracy],
-                feed_dict={cnn.x:test_x,
-                           cnn.t:test_t,
+    if i % 1000 == 0:
+        summary, loss_val, t, p = cnn.sess.run([cnn.summary, cnn.loss, cnn.t, cnn.p],
+                feed_dict={cnn.x:val_x,
+                           cnn.t:val_t,
                            cnn.keep_prob:1.0})
-        print ('Step: %d, Loss: %.12f, Accuracy: %f'
-               % (i, loss_val, acc_val))
+        print ('Step: %d, Loss: %.12f'
+               % (i, loss_val))
+        print (np.array(p[:10]).reshape(10))
+        print (np.array(t[:10]).reshape(10))
         # cnn.saver.save(cnn.sess, os.path.join(os.getcwd(), 'cnn_session'), global_step=i)
         cnn.writer.add_summary(summary, i)
+
+correct = np.zeros(num_test)
+prediction = np.zeros(num_test)
+loss_val, t, p = cnn.sess.run([cnn.loss, cnn.t, cnn.p], feed_dict={cnn.x:test_x, cnn.t:test_t, cnn.keep_prob:1.0})
+
+print ('Final Loss: %.12f' % (loss_val))
+cnt = 0
+for i in range(num_test):
+    if t[i] - 0.05 <= p[i] and p[i] <= t[i] + 0.05:
+        cnt += 1
+
+print (p.reshape(num_test))
+print (t.reshape(num_test))
+print (cnt, num_test)

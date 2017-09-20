@@ -57,31 +57,32 @@ class CNN:
 
         with tf.name_scope('softmax'):
 
-            w0 = get_variable([num_units2, num_class])
-            b0 = get_bias([num_class])
+            w0 = get_variable([num_units2, 1])
+            b0 = get_bias([1])
             p_logits = tf.matmul(hidden2_drop, w0) + b0
-            p = tf.nn.softmax(p_logits)
+            p = tf.sigmoid(p_logits)
 
         with tf.name_scope('optimizer'):
-            t = tf.placeholder(tf.float32, [None, num_class])
-            loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=t,logits=p_logits))
+            t = tf.placeholder(tf.float32, [None, 1])
+            loss = tf.reduce_mean(tf.square(p - t))
             train_step = tf.train.AdamOptimizer(0.0001).minimize(loss)
-            correct_prediction = tf.equal(tf.argmax(p, 1), tf.argmax(t, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+            # correct_prediction = tf.equal(tf.argmax(p, 1), tf.argmax(t, 1))
+            # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-        with tf.name_scope('evaluator'):
-            correct_prediction = tf.equal(tf.argmax(p, 1), tf.argmax(t, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        # with tf.name_scope('evaluator'):
+        #     correct_prediction = tf.equal(tf.argmax(p, 1), tf.argmax(t, 1))
+        #     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
         tf.summary.scalar("loss", loss)
-        tf.summary.scalar("accuracy", accuracy)
+        # tf.summary.scalar("accuracy", accuracy)
         tf.summary.histogram("convolution_filters1", h_conv1)
         tf.summary.histogram("convolution_filters2", h_conv2)
         
         self.x, self.t, self.p, self.keep_prob = x, t, p, keep_prob
         self.train_step = train_step
         self.loss = loss
-        self.accuracy = accuracy
+        self.p = p
+        self.t = t
 
     def prepare_session(self):
         sess = tf.InteractiveSession()
