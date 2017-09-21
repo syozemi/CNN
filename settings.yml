@@ -1,11 +1,11 @@
 # コメント書いたのGsanじゃなくて石部なのでコメント内容間違ってる可能性あり
 # Gsan verify済み
 # 訓練用データ数
-num_train: 200
+num_train: 600
 # validation用データ数
-num_validate: 100
+num_validate: 250
 # テスト用データ数
-num_test: 50
+num_test: 200
 
 # 画像の大きさ
 input_sizex: 360
@@ -15,7 +15,7 @@ num_class: 100
 # バッチ数
 Batch_num: 20
 # 学習回数
-learning_times: 30000
+learning_times: 50000
 # 学習時何割くらいドロップアウトさせるか
 keep_prob: 0.5
 # tensorboardで何枚画像を表示するか
