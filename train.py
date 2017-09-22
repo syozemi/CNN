@@ -16,7 +16,7 @@ import cnn
 f = open("settings.yml", encoding='UTF-8')
 settings = yaml.load(f)
 
-image, ratio = pro.load_cnn_data(1)
+image, ratio = pro.load_cnn_data(2)
 
 print (image.shape, ratio.shape)
 
@@ -46,7 +46,7 @@ for _ in range(settings["learning_times"]):
     batch_t = Batch_t.next_batch(Batch_num)
     cnn.sess.run(cnn.train_step,
              feed_dict={cnn.x:batch_x, cnn.t:batch_t, cnn.keep_prob:settings["keep_prob"]})
-    if i % 10 == 0:
+    if i % 500 == 0:
         summary, loss_val, t, p = cnn.sess.run([cnn.summary, cnn.loss, cnn.t, cnn.p],
                 feed_dict={cnn.x:val_x,
                            cnn.t:val_t,

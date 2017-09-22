@@ -13,9 +13,9 @@ input_sizey: 360
 # クラス数
 num_class: 100
 # バッチ数
-Batch_num: 20
+Batch_num: 49
 # 学習回数
 learning_times: 50000
 # 学習時何割くらいドロップアウトさせるか
-keep_prob: 0.5
+keep_prob: 0.2
 # tensorboardで何枚画像を表示するか
