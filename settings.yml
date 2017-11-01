@@ -12,10 +12,10 @@ input_sizex: 360
 input_sizey: 360
 # クラス数
 num_class: 100
-# バッチ数
-Batch_num: 49
+# バッチ数 これをでかくするとうまくいくっぽい?
+Batch_num: 113
 # 学習回数
-learning_times: 50000
-# 学習時何割くらいドロップアウトさせるか
-keep_prob: 0.2
+learning_times: 10000
+# 学習時何割くらいドロップアウトさせるか。ある程度は大きくないとダメ
+keep_prob: 0.4
 # tensorboardで何枚画像を表示するか

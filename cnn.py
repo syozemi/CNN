@@ -25,11 +25,11 @@ class CNN:
             x_image = tf.reshape(x, [-1,input_sizex,input_sizey,1])
 
         with tf.name_scope('conv_and_pool1'):
-            num_filters1 = 32
+            num_filters1 = 16
             h_conv1, h_pool1 = conv_and_pool(x_image, 1, num_filters1, 10, 2)
 
         with tf.name_scope('conv_and_pool2'):
-            num_filters2 = 64
+            num_filters2 = 32
             h_conv2, h_pool2 = conv_and_pool(h_pool1, num_filters1, num_filters2, 5, 1)
 
         with tf.name_scope('conv_and_pool3'):
@@ -37,7 +37,7 @@ class CNN:
             h_conv3, h_pool3 = conv_and_pool(h_pool2, num_filters2, num_filters3, 3, 1)
 
         with tf.name_scope('conv_and_pool4'):
-            num_filters4 = 64
+            num_filters4 = 128
             h_conv4, h_pool4 = conv_and_pool(h_pool3, num_filters3, num_filters4, 3, 1)
 
         with tf.name_scope('fully_connected'):

@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 
-# np.random.seed(20160704)
-# tf.set_random_seed(20160704)
+np.random.seed(0)
+tf.set_random_seed(0)
 
 def get_variable(shape):
     return tf.Variable(tf.truncated_normal(shape, stddev = 0.01))
